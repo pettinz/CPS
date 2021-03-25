@@ -2,14 +2,14 @@ function Q = make_Q(n,eps,dist)
 %MAKE_Q Summary of this function goes here
 %   Detailed explanation goes here
     arguments
-        n (1,1) int
+        n (1,1) double {mustBeInteger}
         eps (1,1) double
         dist (1,1) string
     end
 
     switch dist
         case "grid"
-            Q = make_Q_grid(n,eps);
+            Q = make_Q_grid(n);
         case "rand"
             err("Not implemented yet")
         otherwise
@@ -18,6 +18,11 @@ function Q = make_Q(n,eps,dist)
 end
 
 function Q = make_Q_grid(n,eps)
+    arguments
+        n (1,1) double {mustBeInteger}
+        eps (1,1) double = 1/4
+    end
+    
     Q = zeros(n,n);
     for i = 1:25
         d = 0;
@@ -37,6 +42,6 @@ function Q = make_Q_grid(n,eps)
             Q(i, i+5) = eps;
             d = d+1;
         end
-        Q(i,i) = d*eps;
+        Q(i,i) = 1-d*eps;
     end
 end
