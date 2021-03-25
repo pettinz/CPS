@@ -60,9 +60,9 @@ for k=1:p
     for i=1:n
         d=norm([x_broad, y_broad]- [x(j), y(j)]);
         if d<=8
-            Rss=Pt-40.2-20*log10(d)+var*randn();
+            Rss=Pt-40.2-20*log10(d)+dev_stand*randn();
         else
-            Rss=Pt-58.5-33*log10(d)+var*randn();
+            Rss=Pt-58.5-33*log10(d)+dev_stand*randn();
         end
         A(i, k)=Rss;
     end
