@@ -1,35 +1,46 @@
-function Q = make_Q_rand(n,x,y,r)
-    arguments
-        n (1,1) double {mustBeInteger}
-        x (:,:) double
-        y (:,:) double
-        r (1,1) double = 4
-    end
+function Q = make_Q_rand(n,r,x,y)
     
-    max=0;
+    din=zeros(25,1); %incoming edges for each sensor
     for i=1:n
-        din=0;
-        for j=n:-1:i
+        din(i)=0;
+        for j=1:n
             if norm([x(i), y(i)]-[x(j), y(j)])<=r && i~=j
-                din=din+1;
+                din(i)=din(i)+1;
             end
-        end
-        if din>max
-            max=din;
         end
     end
 
-    Q=eye(n);
-    eps=1/max;
+    Q1=eye(n); %%uniform metod
+    ep=1/(max(din)+1); %%deve essere minore del massimo
 
     for i=1:n
         for j=n:-1:i
             if norm([x(i), y(i)]-[x(j), y(j)])<=r && i~=j
-                Q(i ,j)=eps;
-                Q(i, i)=Q(i, i)-eps;
-                Q(j, i)=eps;
-                Q(j, j)=Q(j, j)-eps;
+                Q1(i ,j)=ep;
+                Q1(i, i)=Q1(i, i)-ep;
+                Q1(j, i)=ep;
+                Q1(j, j)=Q1(j, j)-ep;
             end
         end
+    end
+    eig1=sort(abs(eig(Q1)),'desc');
+    
+    Q2=eye(n); %%Metropolis metod
+    for i=1:n
+        for j=n:-1:i
+            if  norm([x(i), y(i)]- [x(j), y(j)])<=r && i~=j
+                Q2(i ,j)=1/(1+max(din(i),din(j)));
+                Q2(i, i) = Q2(i, i) - Q2(i,j);
+                Q2(j, i)=Q2(i,j);
+                Q2(j, j)=Q2(j, j)- Q2(j,i);
+            end
+        end
+    end
+    eig2=sort(abs(eig(Q2)),'desc');
+    
+    if(eig1(2)<=eig2(2)) %%take the one with the smaller second largest eig
+        Q=Q1;
+    else
+        Q=Q2;
     end
 end
