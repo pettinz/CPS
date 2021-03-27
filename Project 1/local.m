@@ -7,6 +7,7 @@ clc
 l_room=10; 
 l_p=1;
 p=100;
+n=25; %%number of sensors
 
 xg = 0:1:10;
 yg = 0:1:10;
@@ -15,7 +16,6 @@ uniform=1; %%1->usiamo i sensori distribuiti in maniera uniforme, 0-> usiamo la 
 
 %% sensors uniformly distribuited 
 if uniform==1
-n=25; %%number of sensors
 x_sens=l_room*rand(n, 1);
 y_sens=l_room*rand(n, 1);
 figure(1)
