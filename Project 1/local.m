@@ -116,7 +116,7 @@ for i=1:ni
 %     if sum((xt>th)) ~= 1
 %         continue
 %     end
-    [~, p_cell] = max(abs(xt));
+    [~, p_cell] = max(xt);
     p_cell=p_cell-1;
     x_estimated=fix(p_cell/10)+l_p/2;
     y_estimated=mod(p_cell, 10)+l_p/2;
@@ -125,6 +125,9 @@ for i=1:ni
     if x_estimated==x_measured && y_estimated==y_measured
         fprintf('Success\nnum iter: %d, eps: %f\n',j,eps);
         success=success+1;
+    else
+        fprintf('Fail\nDistance: %f\n', norm([x_estimated y_estimated]...
+        - [x_measured y_measured]));
     end
     p2=plot(x_estimated, y_estimated, '.k', 'MarkerSize', 10);
     pause()
