@@ -1,28 +1,13 @@
-function Q = make_Q_grid(n,eps)
-    arguments
-        n (1,1) double {mustBeInteger}
-        eps (1,1) double = 1/4
-    end
+function Q = make_Q_grid(n)
+    Q1 = make_Q_grid_uniform(n);
+    Q2 = make_Q_grid_metropolis(n);
     
-    Q = zeros(n,n);
-    for i = 1:25
-        d = 0;
-        if mod(i-1, 5) > 0
-            Q(i, i-1) = eps;
-            d = d+1;
-        end
-        if mod(i, 5) > 0
-            Q(i, i+1) = eps;
-            d = d+1;
-        end
-        if fix((i-1)/5) > 0
-            Q(i, i-5) = eps;
-            d = d+1;
-        end
-        if fix((i-1+5)/5) < 5
-            Q(i, i+5) = eps;
-            d = d+1;
-        end
-        Q(i,i) = 1-d*eps;
+    l1 = sort(eig(Q1), "descend");
+    l2 = sort(eig(Q2), "descend");
+    
+    if l1(2) < l2(2)
+        Q = Q1;
+    else
+        Q = Q2;
     end
 end
