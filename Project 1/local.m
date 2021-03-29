@@ -72,7 +72,7 @@ figure(1)
 plot(x_ref, y_ref,'.g');
 
 %% Runtime Phase
-figure()
+figure(3)
 make_grid(xg, yg, x_sens, y_sens);
 hold on
 
@@ -93,7 +93,7 @@ cell=randperm(p, ni);
 for i=1:ni
     x_measured=x_ref(cell(i));
     y_measured=y_ref(cell(i));
-    p1=plot(x_measured, y_measured, 'sb', 'MarkerSize', 10);
+    figure(3), p1=plot(x_measured, y_measured, 'sb', 'MarkerSize', 10);
     pause(1.5)
     y=zeros(n, 1);
     for j=1:n
@@ -138,9 +138,9 @@ for i=1:ni
         - [x_measured y_measured]));
     end
     fprintf('Cella: %d, Predetta: %d\n', cell(i), p_cell+1);
-    p2=plot(x_estimated, y_estimated, '.k', 'MarkerSize', 10);
+    figure(3), p2=plot(x_estimated, y_estimated, '.k', 'MarkerSize', 10);
     pause(0.5)
     delete(p1)
     delete(p2)
 end
-fprintf('Success rate: %2.2f\n',(success/ni));
+fprintf('Success rate: %2.0f%%\n',(success/ni*100));
