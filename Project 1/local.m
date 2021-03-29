@@ -73,19 +73,21 @@ ni=50; %%number of iterations
 lam = 1e-4;
 tau = 0.7;
 th = 0.5;
-max_iter = 1e3;
+max_iter = 1e5;
 min_eps = 1e-6;
 success = 0;
 
 u_A=mutual_coherence(A); %coherence before orth
 Om=(orth(A'))'; %orthogonalization of A
-Ap=A'*inv(A*A');
+Apseudo=A'*inv(A*A');
 u_Om=mutual_coherence(Om); %coherence after orth
+cell=randperm(p, ni);
 
 for i=1:ni
-    x_measured=x_ref(ceil(p*rand()));
-    y_measured=x_ref(ceil(p*rand()));
+    x_measured=x_ref(cell(i));
+    y_measured=y_ref(cell(i));
     p1=plot(x_measured, y_measured, 'sb', 'MarkerSize', 10);
+    pause(1.5)
     y=zeros(n, 1);
     for j=1:n
         d=norm([x_measured, y_measured]-[x_sens(j), y_sens(j)]);
@@ -97,42 +99,41 @@ for i=1:ni
     end
     
     if u_Om<u_A
-        y=Om*Ap*y;
-        A=Om;
+        yp=Om*Apseudo*y;
+        Ap=Om;
+    else
+        yp=y;
+        Ap=A;
     end
     
     xt_1 = zeros(p,1);
     
     for j=1:max_iter    
-        xt = soft_tresh(xt_1+tau.*(A'*(y-A*xt_1)), lam);
+        xt = soft_tresh(xt_1+tau.*(Ap'*(yp-Ap*xt_1)), lam);
         eps = norm(xt-xt_1,2)^2;
         
-        if eps <= min_eps
+        if eps <= min_eps && sum((abs(xt)>th))==1
             break
         end
         xt_1 = xt;
     end
-%     
-%     if sum((xt>th)) ~= 1
-%         continue
-%     end
-    [~, p_cell] = max(xt);
+  
+    [~, p_cell] = max(abs(xt));
     p_cell=p_cell-1;
     x_estimated=fix(p_cell/10)+l_p/2;
     y_estimated=mod(p_cell, 10)+l_p/2;
 
-    pause()
-    if x_estimated==x_measured && y_estimated==y_measured
-        fprintf('Success\nnum iter: %d, eps: %f\n',j,eps);
+    if cell(i)==p_cell+1
+        fprintf('Success\nnum iter: %d\n',j);
         success=success+1;
     else
-        fprintf('Fail\nDistance: %f\n', norm([x_estimated y_estimated]...
+        fprintf('Fail\nnum iter: %d, Distance: %f\n', j, norm([x_estimated y_estimated]...
         - [x_measured y_measured]));
     end
+    fprintf('Cella: %d, Predetta: %d\n', cell(i), p_cell+1);
     p2=plot(x_estimated, y_estimated, '.k', 'MarkerSize', 10);
-    pause()
+    pause(0.5)
     delete(p1)
     delete(p2)
 end
-
 fprintf('Success rate: %2.2f\n',(success/ni));
