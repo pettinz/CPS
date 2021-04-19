@@ -1,13 +1,10 @@
-function Q = make_Q_grid_uniform(n,eps)
-    arguments
-        n (1,1) double {mustBeInteger}
-        eps (1,1) double = 0;
-    end
-    
-    if eps == 0
-        P = build_connections(n);
-        eps = 1/(1+max(P(:)));
-    end
+function Q = make_Q_grid_uniform(n)
+%     arguments
+%         n (1,1) double {mustBeInteger}
+%         eps (1,1) double = 0;
+%     end
+    P = build_connections(n);
+    eps = 1/(1+max(P(:)));
     
     Q = zeros(n);
     for i = 1:n

@@ -71,7 +71,7 @@ end
 figure(1)
 plot(x_ref, y_ref,'.g');
 
-%% Runtime Phase
+%% Runtime Phase - IST
 figure(3)
 make_grid(xg, yg, x_sens, y_sens);
 hold on
@@ -117,9 +117,9 @@ for i=1:ni
     
     for j=1:max_iter    
         xt = soft_tresh(xt_1+tau.*(Ap'*(yp-Ap*xt_1)), lam);
-        eps = norm(xt-xt_1,2)^2;
+        eps = norm(xt-xt_1,2);
         
-        if eps <= min_eps && sum((abs(xt)>th))==1
+        if eps <= min_eps 
             break
         end
         xt_1 = xt;
@@ -139,6 +139,86 @@ for i=1:ni
     end
     fprintf('Cella: %d, Predetta: %d\n', cell(i), p_cell+1);
     figure(3), p2=plot(x_estimated, y_estimated, '.k', 'MarkerSize', 10);
+    pause(0.5)
+    delete(p1)
+    delete(p2)
+end
+fprintf('Success rate: %2.0f%%\n',(success/ni*100));
+
+
+%% DIST
+figure(4)
+make_grid(xg, yg, x_sens, y_sens);
+hold on
+
+lam = 1e-4;
+tau = 0.7;
+th = 0.5;
+max_iter = 1e5;
+min_eps = 1e-5;
+success = 0;
+
+for it=1:ni
+    x_measured=x_ref(cell(it));
+    y_measured=y_ref(cell(it));
+    figure(4), p1=plot(x_measured, y_measured, 'sb', 'MarkerSize', 10);
+    pause(1.5)
+    y=zeros(n, 1);
+    
+    for j=1:n
+        d=norm([x_measured, y_measured]-[x_sens(j), y_sens(j)]);
+        if d<=8
+            y(j)=Pt-40.2-20*log10(d)+dev_stand*randn();
+        else
+            y(j)=Pt-58.5-33*log10(d)+dev_stand*randn();
+        end
+    end
+    
+    if u_Om<u_A
+        yp=Om*Apseudo*y;
+        Ap=Om;
+    else
+        yp=y;
+        Ap=A;
+    end
+        
+    xt_0 = zeros(p,n);
+    done=zeros(n,1);
+    iter=zeros(n,1);
+    
+    for k=1:max_iter
+        for i=1:n
+            if done(i)==1
+                continue;
+            end
+            iter(i)=iter(i)+1;
+            xt(:,i) = soft_tresh(xt_0*Q(i,:)'+tau.*(Ap(i,:)'*(yp(i)-Ap(i,:)*xt_0(:,i))), lam);
+            eps = norm(xt(:,i)-xt_0(:,i),2);
+            if eps <= min_eps
+                done(i)=1;
+            end
+        end
+        if(min(done)==1)
+            break
+        end
+        xt_0=xt;
+    end
+    round(xt,2) %% see if consensus
+    
+    [~, p_cell] = max(abs(xt(:,1)));
+    p_cell=p_cell-1;
+    x_estimated=fix(p_cell/10)+l_p/2;
+    y_estimated=mod(p_cell, 10)+l_p/2;
+    
+    if cell(it)==p_cell+1
+        fprintf('Success\nnum iter: %d\n', round(mean(iter)));
+        success=success+1;
+    else
+        fprintf('Fail\nnum iter: %d, Distance: %f\n', mean(iter), norm([x_estimated y_estimated]...
+            - [x_measured y_measured]));
+    end
+    fprintf('Cella: %d, Predetta: %d\n', cell(it), p_cell+1);
+    figure(4), p2=plot(x_estimated, y_estimated, '.k', 'MarkerSize', 10);
     pause(0.5)
     delete(p1)
     delete(p2)

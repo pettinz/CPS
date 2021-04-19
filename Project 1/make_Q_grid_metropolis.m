@@ -1,7 +1,7 @@
 function Q = make_Q_grid_metropolis(n)
-    arguments
-        n (1,1) double {mustBeInteger}
-    end
+%     arguments
+%         n (1,1) double {mustBeInteger}
+%     end
     
     P = build_connections(n);
     P = reshape(P,1,[]);
