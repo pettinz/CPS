@@ -74,6 +74,7 @@ plot(x_ref, y_ref,'.g');
 %% Runtime Phase - IST
 figure(3)
 make_grid(xg, yg, x_sens, y_sens);
+title('IST')
 hold on
 
 ni=50; %%number of iterations
@@ -83,6 +84,8 @@ th = 0.5;
 max_iter = 1e5;
 min_eps = 1e-6;
 success = 0;
+dist=zeros(ni, 1);
+cum_dist=zeros(ni, 1);
 
 u_A=mutual_coherence(A); %coherence before orth
 Om=(orth(A'))'; %orthogonalization of A
@@ -94,7 +97,7 @@ for i=1:ni
     x_measured=x_ref(cell(i));
     y_measured=y_ref(cell(i));
     figure(3), p1=plot(x_measured, y_measured, 'sb', 'MarkerSize', 10);
-    pause(1.5)
+    %pause(1.5)
     y=zeros(n, 1);
     for j=1:n
         d=norm([x_measured, y_measured]-[x_sens(j), y_sens(j)]);
@@ -129,25 +132,34 @@ for i=1:ni
     p_cell=p_cell-1;
     x_estimated=fix(p_cell/10)+l_p/2;
     y_estimated=mod(p_cell, 10)+l_p/2;
-
+    dist(i)= norm([x_estimated y_estimated] - [x_measured y_measured]);
+    cum_dist(i)=sum(dist(1:i));
     if cell(i)==p_cell+1
         fprintf('Success\nnum iter: %d\n',j);
         success=success+1;
     else
-        fprintf('Fail\nnum iter: %d, Distance: %f\n', j, norm([x_estimated y_estimated]...
-        - [x_measured y_measured]));
+        fprintf('Fail\nnum iter: %d\n', j);
     end
     fprintf('Cella: %d, Predetta: %d\n', cell(i), p_cell+1);
     figure(3), p2=plot(x_estimated, y_estimated, '.k', 'MarkerSize', 10);
-    pause(0.5)
+    %pause(0.5)
+    pause()
     delete(p1)
     delete(p2)
 end
 fprintf('Success rate: %2.0f%%\n',(success/ni*100));
-
-
+figure()
+plot([1:ni], dist, '--*')
+xlabel('iterations')
+ylabel('distance(m)')
+pause()
+figure()
+plot([1:ni], cum_dist, '--*')
+xlabel('iterations')
+ylabel('cmuulative distance(m)')
+pause()
 %% DIST
-figure(4)
+figure(6)
 make_grid(xg, yg, x_sens, y_sens);
 hold on
 
@@ -155,14 +167,14 @@ lam = 1e-4;
 tau = 0.7;
 th = 0.5;
 max_iter = 1e5;
-min_eps = 1e-5;
+min_eps = 1e-6;
 success = 0;
 
 for it=1:ni
     x_measured=x_ref(cell(it));
     y_measured=y_ref(cell(it));
-    figure(4), p1=plot(x_measured, y_measured, 'sb', 'MarkerSize', 10);
-    pause(1.5)
+    figure(6), p1=plot(x_measured, y_measured, 'sb', 'MarkerSize', 10);
+    %pause(1.5)
     y=zeros(n, 1);
     
     for j=1:n
@@ -199,27 +211,27 @@ for it=1:ni
             end
         end
         if(min(done)==1)
-            break
+            break;
         end
         xt_0=xt;
     end
-    round(xt,2) %% see if consensus
+    %round(xt,2) %% see if consensus
     
-    [~, p_cell] = max(abs(xt(:,1)));
+    [~, p_cell] = max(abs(xt));
     p_cell=p_cell-1;
     x_estimated=fix(p_cell/10)+l_p/2;
     y_estimated=mod(p_cell, 10)+l_p/2;
     
-    if cell(it)==p_cell+1
+    if cell(it)==mode(p_cell+1)
         fprintf('Success\nnum iter: %d\n', round(mean(iter)));
         success=success+1;
     else
-        fprintf('Fail\nnum iter: %d, Distance: %f\n', mean(iter), norm([x_estimated y_estimated]...
-            - [x_measured y_measured]));
+        fprintf('Fail\nnum iter: %d\n', round(mean(iter)));
     end
-    fprintf('Cella: %d, Predetta: %d\n', cell(it), p_cell+1);
-    figure(4), p2=plot(x_estimated, y_estimated, '.k', 'MarkerSize', 10);
-    pause(0.5)
+    fprintf('Cella: %d, Predetta: %d\n', cell(it), mode(p_cell+1));
+    figure(6), p2=plot(x_estimated, y_estimated, '.k', 'MarkerSize', 10);
+    %pause(0.5)
+    pause()
     delete(p1)
     delete(p2)
 end
