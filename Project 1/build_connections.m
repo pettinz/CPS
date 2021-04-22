@@ -9,9 +9,9 @@ function P = build_connections(n)
 %   P : A matrix m-by-m (m=sqrt(n)) representing the element in the grid
 %       topology. Each cell contains the number of links.
 
-    arguments
-        n (1,1) double {mustBeInteger}
-    end
+%     arguments
+%         n (1,1) double {mustBeInteger}
+%     end
     
     xq = zeros(n,1);
     yq = zeros(n,1);

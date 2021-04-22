@@ -12,10 +12,10 @@ function [nn, sn, xn, yn] = get_neighbors(k,n)
 %   xn : The x coordinates of the neighbors
 %   yn : The y coordinates of the neighbors
 
-    arguments
-        k (1,1) double {mustBeInteger}
-        n (1,1) double {mustBeInteger}
-    end
+%     arguments
+%         k (1,1) double {mustBeInteger}
+%         n (1,1) double {mustBeInteger}
+%     end
     
     n = sqrt(n);
     

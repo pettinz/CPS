@@ -50,22 +50,15 @@ dev_stand=0.5;
 var=0.5^2;
 x_ref=zeros(100,1);
 y_ref=zeros(100,1);
-
+A=zeros(n,p);
+B=A;
 for k=1:p
     k_n=k-1; % matlab fa partire i cicli da 1 mannaggia a lui
     x_ref(k)=fix(k_n/10)+l_p/2;
     y_ref(k)=mod(k_n, 10)+l_p/2;
     
-    for i=1:n
-        d=norm([x_ref(k), y_ref(k)]-[x_sens(i), y_sens(i)]);
-        if d<=8
-            Rss=Pt-40.2-20*log10(d)+dev_stand*randn();
-        else
-            Rss=Pt-58.5-33*log10(d)+dev_stand*randn();
-        end
-        A(i, k)=Rss;
-    end
-    
+    %Calcolo RSS
+    A(:,k) = get_RSS([x_ref(k), y_ref(k)],[x_sens, y_sens],Pt,dev_stand);
 end
 
 figure(1)
@@ -99,14 +92,9 @@ for i=1:ni
     figure(3), p1=plot(x_measured, y_measured, 'sb', 'MarkerSize', 10);
     %pause(1.5)
     y=zeros(n, 1);
-    for j=1:n
-        d=norm([x_measured, y_measured]-[x_sens(j), y_sens(j)]);
-        if d<=8
-            y(j)=Pt-40.2-20*log10(d)+dev_stand*randn();
-        else
-            y(j)=Pt-58.5-33*log10(d)+dev_stand*randn();
-        end
-    end
+    
+    %Calcolo RSS
+    y(:) = get_RSS([x_measured, y_measured],[x_sens, y_sens],Pt,dev_stand);
     
     if u_Om<u_A
         yp=Om*Apseudo*y;
@@ -160,11 +148,11 @@ figure(6)
 make_grid(xg, yg, x_sens, y_sens);
 hold on
 
-lam = 1e-4;
+lam = 1e-5;
 tau = 0.7;
 th = 0.5;
 max_iter = 1e5;
-min_eps = 1e-6;
+min_eps = 1e-5;
 success = 0;
 
 for it=1:ni
@@ -174,14 +162,8 @@ for it=1:ni
     %pause(1.5)
     y=zeros(n, 1);
     
-    for j=1:n
-        d=norm([x_measured, y_measured]-[x_sens(j), y_sens(j)]);
-        if d<=8
-            y(j)=Pt-40.2-20*log10(d)+dev_stand*randn();
-        else
-            y(j)=Pt-58.5-33*log10(d)+dev_stand*randn();
-        end
-    end
+    %Calcolo RSS
+    y(:) = get_RSS([x_measured, y_measured],[x_sens, y_sens],Pt,dev_stand);
     
     if u_Om<u_A
         yp=Om*Apseudo*y;
