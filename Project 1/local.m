@@ -84,8 +84,8 @@ th = 0.5;
 max_iter = 1e5;
 min_eps = 1e-6;
 success = 0;
+iter=zeros(ni, 1);
 dist=zeros(ni, 1);
-cum_dist=zeros(ni, 1);
 
 u_A=mutual_coherence(A); %coherence before orth
 Om=(orth(A'))'; %orthogonalization of A
@@ -133,7 +133,7 @@ for i=1:ni
     x_estimated=fix(p_cell/10)+l_p/2;
     y_estimated=mod(p_cell, 10)+l_p/2;
     dist(i)= norm([x_estimated y_estimated] - [x_measured y_measured]);
-    cum_dist(i)=sum(dist(1:i));
+    iter(i)=j;
     if cell(i)==p_cell+1
         fprintf('Success\nnum iter: %d\n',j);
         success=success+1;
@@ -147,17 +147,14 @@ for i=1:ni
     delete(p1)
     delete(p2)
 end
-fprintf('Success rate: %2.0f%%\n',(success/ni*100));
+fprintf('\n\nSuccess rate: %2.0f%%\nAverage number of iterations: %d\n',...
+    (success/ni*100), round(mean(iter)));
 figure()
 plot([1:ni], dist, '--*')
 xlabel('iterations')
 ylabel('distance(m)')
-pause()
-figure()
-plot([1:ni], cum_dist, '--*')
-xlabel('iterations')
-ylabel('cmuulative distance(m)')
-pause()
+title('IST')
+
 %% DIST
 figure(6)
 make_grid(xg, yg, x_sens, y_sens);
