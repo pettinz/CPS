@@ -167,6 +167,7 @@ for it=1:ni
     figure(6), p1=plot(x_measured, y_measured, 'sb', 'MarkerSize', 10);
     %pause(1.5)
     y=zeros(n, 1);
+    xt_0 = rand(p,n);
     
     %Calcolo RSS
     y(:) = get_RSS([x_measured, y_measured],[x_sens, y_sens],Pt,dev_stand);
@@ -179,7 +180,7 @@ for it=1:ni
         Ap=A;
     end
     
-    [xt, iter(it)]=distt(Ap, yp, max_iter, Q, tau, lam, min_eps); 
+    [xt, iter(it)]=distt(Ap, yp, xt_0, max_iter, Q, tau, lam, min_eps); 
     %round(xt,2) %% see if consensus
     
     [~, p_cell] = max(abs(xt));
@@ -221,3 +222,46 @@ ylim([min(iter) max(iter)])
 xlim([1 50])
 legend('number of iterations', 'average number of iterations', 'Location', 'southwest')
 legend('boxoff')
+
+%% O-DIST
+figure(7)
+make_grid(xg, yg, x_sens, y_sens);
+title('O-DIST')
+hold on
+
+path = [1 12 23 34 44 43 33 34 45 56 67 77 76 66 67 78 89 100];
+i=1;
+y=zeros(n, 1);
+xt_0 = zeros(p,n);
+xt_0(path(1),:) = 1;
+max_iter = 100;
+cumulative_dist = zeros(length(path),1);
+coord_measured = zeros(length(path),2);
+coord_estimated = zeros(length(path),2);
+while(true)
+    if i > length(path) %fine del percorso
+        break;
+    end
+    x_measured=x_ref(path(i)); %il target si è mosso
+    y_measured=y_ref(path(i));
+    coord_measured(i,:) = [x_measured, y_measured];
+    
+    
+    %Calcolo RSS
+    y(:) = get_RSS([x_measured, y_measured],[x_sens, y_sens],Pt,dev_stand);
+    
+    [xt, ~]=distt(Ap, yp, xt_0, max_iter, Q, tau, lam, min_eps);
+    [~, p_cell] = max(abs(xt));
+    p_cell=p_cell-1;
+    x_estimated=fix(p_cell/10)+l_p/2;
+    y_estimated=mod(p_cell, 10)+l_p/2;
+    coord_estimated(i,:) = [mean(x_estimated), mean(y_estimated)];
+    
+    cumulative_dist(i) = norm(coord_estimated(i,:) - coord_measured(i,:));
+    
+    xt_0 = xt;
+    i = i+1;
+end
+figure(7), plot(coord_measured(:,1), coord_measured(:,2), '-o', 'MarkerSize', 10);
+figure(7), plot(coord_estimated(:,1), coord_estimated(:,2), '-o', 'MarkerSize', 10, 'Color', 'r');
+fprintf('\nEnd of path. Cumulative distance: %2.2f\n',sum(cumulative_dist));

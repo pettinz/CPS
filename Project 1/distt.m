@@ -1,4 +1,4 @@
-function [xt, n_iter] = distt(A, y, max_iter, Q, tau, lam, min_eps)
+function [xt, n_iter] = distt(A, y, xt_0, max_iter, Q, tau, lam, min_eps)
 %DIST Summary of this function goes here
 %   Detailed explanation goes here
 %     arguments
@@ -11,7 +11,6 @@ function [xt, n_iter] = distt(A, y, max_iter, Q, tau, lam, min_eps)
 %         min_eps (1,1) double
 %     end
 [n, p]=size(A);
-xt_0 = rand(p,n);
 done=zeros(n,1);
 
 for k=1:max_iter
