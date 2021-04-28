@@ -198,7 +198,7 @@ for it=1:ni
     fprintf('Cella: %d, Predetta: %d\n', cell(it), mode(p_cell+1));
     figure(6), p2=plot(x_estimated, y_estimated, '.k', 'MarkerSize', 10);
     %pause(0.5)
-    pause()
+    %pause()
     delete(p1)
     delete(p2)
 end
@@ -229,11 +229,11 @@ make_grid(xg, yg, x_sens, y_sens);
 title('O-DIST')
 hold on
 
-path = [1 12 23 34 44 43 33 34 45 56 67 77 76 66 67 78 89 100];
+path = 1:11:p; %path diagonale
+%path = [1 12 23 34 44 43 33 34 45 56 67 77 76 66 67 78 89 100]; 
 i=1;
 y=zeros(n, 1);
 xt_0 = zeros(p,n);
-xt_0(path(1),:) = 1;
 max_iter = 100;
 cumulative_dist = zeros(length(path),1);
 coord_measured = zeros(length(path),2);
@@ -246,9 +246,16 @@ while(true)
     y_measured=y_ref(path(i));
     coord_measured(i,:) = [x_measured, y_measured];
     
-    
     %Calcolo RSS
     y(:) = get_RSS([x_measured, y_measured],[x_sens, y_sens],Pt,dev_stand);
+    
+    if u_Om<u_A
+        yp=Om*Apseudo*y;
+        Ap=Om;
+    else
+        yp=y;
+        Ap=A;
+    end
     
     [xt, ~]=distt(Ap, yp, xt_0, max_iter, Q, tau, lam, min_eps);
     [~, p_cell] = max(abs(xt));
