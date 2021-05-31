@@ -10,8 +10,9 @@ function [xt, n_iter] = distt(A, y, xt_0, max_iter, Q, tau, lam, min_eps)
 %         iter (1,1) double {mustBeInteger}
 %         min_eps (1,1) double
 %     end
-[n, p]=size(A);
-done=zeros(n,1);
+[n, p] = size(A);
+done = zeros(n,1);
+xt = zeros(p,n);
 
 for k=1:max_iter
     for i=1:n
