@@ -1,0 +1,88 @@
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass{article}
+
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[italian]{babel}
+\usepackage[version=3]{mhchem} % Package for chemical equation typesetting
+\usepackage{natbib} % Required to change bibliography style to APA
+\usepackage{amsmath} % Required for some math elements
+\usepackage[separate-uncertainty=true]{siunitx}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{graphicx}
+% Here: H option for float placement
+\usepackage{float}
+
+% caption and subcaption work together
+\usepackage{subcaption} % loads the caption package
+
+\linespread{1.2}
+
+\sisetup{output-decimal-marker = {,}}
+\DeclareSIUnit\div{div}
+\pgfplotsset{width=8cm,compat=1.9}
+\setlength\parindent{0pt} % Removes all indentation from paragraphs
+% \renewcommand{\labelenumi}{\alph{enumi}.} % Make numbering in the enumerate environment by letter rather than number (e.g. section 6)
+
+%\usepackage{times} % Uncomment to use the Times New Roman font
+
+%----------------------------------------------------------------------------------------
+%	DOCUMENT INFORMATION
+%----------------------------------------------------------------------------------------
+
+\title{ Project II: distributed control \\of a multi-agents
+magnetic levitation system
+ \\[1cm] 
+ Modeling and control of cyberphysical systems \\ 01UDSOV} % Title
+
+\author{%
+\begin{tabular}{c} Simone Gallo \\ s276217 \end{tabular} \and
+\begin{tabular}{c} Francesco Menon \\ s277870 \end{tabular} \and
+\begin{tabular}{c} Angelo Pettinelli \\ s269291 \end{tabular} \and
+\begin{tabular}{c} Esmeraldi Xuna \\ s277995 \end{tabular}}
+
+\date{\today} % Date for the report
+\begin{document}
+
+\vspace*{\fill}
+    \vbox{
+        \centering
+        \includegraphics[width=.75\textwidth]{logo}
+        \maketitle %this typesets the contents of \title, \author and \date
+    }
+\vspace*{\fill}
+
+\clearpage
+
+\section{Introduction}
+
+\section{Abstract}
+
+\section{Set Up}
+
+\section{Distributed regulator based on a distributed neighborhood observer
+structure}
+
+\subsection{Architecture Design}
+
+\section{Distributed regulator based on local observers}
+
+\subsection{Architecture Design}
+
+\section{Results}
+\subsection{Constant reference}
+\subsection{Ramp reference}
+\subsection{Sinusoidal reference}
+
+\section{Noise Effect}
+\section{Parameters tuning}
+\subsection{Coupling gain}
+\subsection{Weighting matrix}
+
+\section{Conclusions}
+%----------------------------------------------------------------------------------------
+
+\end{document}
