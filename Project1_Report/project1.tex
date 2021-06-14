@@ -4,27 +4,41 @@
 
 \documentclass{article}
 
-\usepackage[a4paper, total={6in, 8in}]{geometry}
-\usepackage[italian]{babel}
+\usepackage[a4paper, total={6.5in, 8.5in}]{geometry}
+\usepackage[english]{babel}
 \usepackage[version=3]{mhchem} % Package for chemical equation typesetting
 \usepackage{natbib} % Required to change bibliography style to APA
 \usepackage{amsmath} % Required for some math elements
 \usepackage[separate-uncertainty=true]{siunitx}
 \usepackage{tikz}
 \usepackage{pgfplots}
+\usepackage{tabularx}
 \usepackage{graphicx}
 % Here: H option for float placement
 \usepackage{float}
+\usepackage{xcolor, soul}
 
 % caption and subcaption work together
+\usepackage[justification=centering]{caption}
 \usepackage{subcaption} % loads the caption package
+\usepackage{chngcntr}
+\counterwithin{figure}{section}
+\usepackage{wrapfig}
+
+\usepackage{array}
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
+
+\definecolor{beige}{rgb}{0.95,0.93,0.89}
+\definecolor{bluePolito}{rgb}{0,0.15,0.29}
+
+\newcommand{\highlight}[1]{\sethlcolor{bluePolito}\textcolor{white}{\hl{\mbox{{#1}}}}}
 
 \linespread{1.2}
 
 \sisetup{output-decimal-marker = {,}}
 \DeclareSIUnit\div{div}
 \pgfplotsset{width=8cm,compat=1.9}
-\setlength\parindent{0pt} % Removes all indentation from paragraphs
+% \setlength\parindent{0pt} % Removes all indentation from paragraphs
 % \renewcommand{\labelenumi}{\alph{enumi}.} % Make numbering in the enumerate environment by letter rather than number (e.g. section 6)
 
 %\usepackage{times} % Uncomment to use the Times New Roman font
@@ -33,76 +47,47 @@
 %	DOCUMENT INFORMATION
 %----------------------------------------------------------------------------------------
 
-\title{ Project I: distributed localization with CPSs \\ Modeling and control of cyberphysical systems \\ 01UDSOV} % Title
-
-\author{%
-\begin{tabular}{c} Simone Gallo \\ s276217 \end{tabular} \and
-\begin{tabular}{c} Francesco Menon \\ s277870 \end{tabular} \and
-\begin{tabular}{c} Angelo Pettinelli \\ s269291 \end{tabular} \and
-\begin{tabular}{c} Esmeraldi Xuna \\ s277995 \end{tabular}}
-
-\date{\today} % Date for the report
-
 \begin{document}
 
-\vspace*{\fill}
+\begin{titlepage}
+    \vspace*{\fill}
     \vbox{
         \centering
         \includegraphics[width=.75\textwidth]{logo}
-        \maketitle %this typesets the contents of \title, \author and \date
+
+        \vspace*{5em}
+        \Huge \highlight{Modeling and control of cyberphysical systems}
+        
+        \vspace*{.5em}
+        \LARGE Project I: distributed localization with CPSs
+
+        \vspace*{2em}
+
+        \large
+        \begin{tabular}{P{5.5cm} P{5.5cm}}
+            Simone Gallo & Francesco Menon \\
+            s276217 & s277870 \\
+            Angelo Pettinelli & Esmeraldi Xuna \\
+            s269291 & s277995
+        \end{tabular}
+
+        \vspace*{4em}
+        \today
+
+        \vfill
     }
 \vspace*{\fill}
+\end{titlepage}
 
 \clearpage
+\tableofcontents
+\clearpage
 
-% If you wish to include an abstract, uncomment the lines below
-% \begin{abstract}
-% Abstract text
-% \end{abstract}
+\input{sections/introduction.tex}
+\input{sections/localization.tex}
+\input{sections/tracking.tex}
+\input{sections/extensions.tex}
 
-%----------------------------------------------------------------------------------------
-%	SECTION 1
-%----------------------------------------------------------------------------------------
-
-\section{Introduction}
-In this project, we simulate an indoor localization/tracking system through a wireless sensor network (WSN).
-The sensor acquire the received signal strength (RSS) on a signal broadcast by a target to be located.
-
-\subsection{Aims of the project}
-
-\begin{enumerate}
-    \item Simulation of a localization/tracking problem in WSNs
-    \item Implementation of a localization/tracking distributed algorithm
-    \item Analysis of the results
-\end{enumerate}
-
-\subsection{Physical setting}
-
-\begin{itemize}
-    \item Environment: square room of \SI{100}{\metre\squared}
-    \item Grid: $p = 100$ square cells of \SI{1}{\metre\squared}
-    \item Reference points: centers of the cells
-    \item RSS model: indoor empirical model defined by the IEEE 802.15.4 standard
-        \begin{equation}
-            RSS(d) = \begin{cases}
-                P_t - 40.2 - 20\log{d} + \eta & , \text{if $d\leq \SI{8}{\metre}$}\\
-                P_t - 58.5 - 33\log{d} + \eta & , \text{if $d > \SI{8}{\metre}$}
-            \end{cases}
-        \end{equation}
-        where $P_t=25$, $\eta$ is a Gaussian noise $\eta \sim \mathcal{N}(0,\sigma^2)$, $\sigma = 0.5$.
-\end{itemize}
-
-\subsection{WSN}
-
-\begin{itemize}
-    \item $n = 25$ sensors
-    \item Deployment:
-    \begin{itemize}
-        \item uniformly at random positions; each sensor is connected with sensors at distance $\le r$.
-        \item grid topology: the sensors are deployed on a grid $5 \times 5$; sensors are connected to 
-        4 closest sensors (3 or 2 on the boundaries)
-    \end{itemize}
-\end{itemize}
 
 %----------------------------------------------------------------------------------------
 
